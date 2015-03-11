@@ -1,73 +1,61 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-#
+
 unless Vagrant.has_plugin?("vagrant-hostsupdater")
-	raise 'vagrant-hostsupdater not installed. Try run \'vagrant plugin install vagrant-hostsupdater\''
+  raise 'vagrant-hostsupdater not installed. Try run \'vagrant plugin install vagrant-hostsupdater\''
 end
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
 VAGRANT_APP_DOMAIN = "kiiiosk.dev"
-Vagrant.configure("2") do |config|
-	config.vm.box = 'ubuntu/trusty32'
-	config.vm.network :private_network, ip: '192.168.10.201'
-	config.vm.network :forwarded_port, guest: 3000, host: 8080
-	config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2222
-	config.vm.hostname = VAGRANT_APP_DOMAIN
-	config.ssh.forward_agent = true
-	config.ssh.pty = true
-	config.vm.synced_folder "./", "/home/vagrant/kiiiosk.dev"
-	config.hostsupdater.aliases = [VAGRANT_APP_DOMAIN, "www.#{VAGRANT_APP_DOMAIN}", "api.#{VAGRANT_APP_DOMAIN}", "admin.#{VAGRANT_APP_DOMAIN}","thumbor.#{VAGRANT_APP_DOMAIN}"]
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # All Vagrant configuration is done here. The most common configuration
+  # options are documented and commented below. For a complete reference,
+  # please see the online documentation at vagrantup.com.
+
+  # Every Vagrant virtual environment requires a box to build off of.
+  config.vm.box = "http://kiiiosk.ru/system/kiiiosk.box"
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine. In the example below,
+  # accessing "localhost:8080" will access port 80 on the guest machine.
+  config.vm.network "forwarded_port", guest: 3000, host: 8080
+
+
+  config.hostsupdater.aliases = [VAGRANT_APP_DOMAIN, "www.#{VAGRANT_APP_DOMAIN}", "api.#{VAGRANT_APP_DOMAIN}", "admin.#{VAGRANT_APP_DOMAIN}","thumbor.#{VAGRANT_APP_DOMAIN}"]
   config.hostsupdater.aliases << "*.#{VAGRANT_APP_DOMAIN}" if RUBY_PLATFORM =~ /darwin/
-	config.vm.provider :virtualbox do |vm|
-		vm.customize ["modifyvm", :id, "--name", "kiiiosk.dev"]
-		vm.customize ["modifyvm", :id, "--memory", [ENV['MERCHANTLY_VM_MEM'].to_i, 3072].max]
-		cpu_count = 2
-		if RUBY_PLATFORM =~ /linux/
-			cpu_count = `nproc`.to_i
-		elsif RUBY_PLATFORM =~ /darwin/
-			cpu_count = `sysctl -n hw.ncpu`.to_i
-		end
-		vm.customize ["modifyvm", :id, "--cpus", cpu_count]
-		vm.customize ["modifyvm", :id, "--ioapic", "on"]
-		vm.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-	end
 
 
-	config.vm.provision "shell", inline: "bash -c \"export DEBIAN_FRONTEND=noninteractive;
-apt-get install software-properties-common;
-cp /home/vagrant/kiiiosk.dev/vagrant-conf.d/sources.list /etc/apt/sources.list;
-add-apt-repository -y ppa:webupd8team/java;
-echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections;
-wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -
-wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-add-apt-repository -y 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main';
-add-apt-repository -y 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
-apt-get update;
-apt-get -y upgrade;
-apt-get -y install oracle-java7-installer build-essential bundler ca-certificates git imagemagick \
-  libmagickwand-dev libmysqlclient-dev lsb-release mdbtools mdbtools-dev memcached nodejs nodejs-legacy npm \
-  openssl rake redis-server geoip-database-contrib libsqlite3-dev libpq-dev zsh libyaml-dev libreadline-dev \
-  elasticsearch postgresql-9.4 postgresql-client-9.4 postgresql-contrib-9.4 htop mc tcpdump nano && echo 'OK' || true;
-update-rc.d elasticsearch defaults 95 10;
-\"
-/usr/share/elasticsearch/bin/plugin -l|grep HQ || /usr/share/elasticsearch/bin/plugin -install royrusso/elasticsearch-HQ;
-/usr/share/elasticsearch/bin/plugin -l|grep analysis-morphology || /usr/share/elasticsearch/bin/plugin -install analysis-morphology -url http://dl.bintray.com/content/imotov/elasticsearch-plugins/org/elasticsearch/elasticsearch-analysis-morphology/1.2.0/elasticsearch-analysis-morphology-1.2.0.zip;
-cp /home/vagrant/kiiiosk.dev/vagrant-conf.d/pg_hba.conf /etc/postgresql/9.4/main && service postgresql restart;
-test -d /home/vagrant/.rbenv || sudo -iu vagrant bash -c \'git clone git://github.com/sstephenson/rbenv.git /home/vagrant/.rbenv';
-sudo -iu vagrant bash -c \'echo \"export PGUSER=postgres;export PATH=\"$HOME/.rbenv/bin:$PATH\"\" |tee -a  /home/vagrant/.profile';
-test -d /home/vagrant/.rbenv/plugins/ruby-build || sudo -iu vagrant git clone git://github.com/sstephenson/ruby-build.git /home/vagrant/.rbenv/plugins/ruby-build;
-sudo -iu vagrant echo 'gem: --no-ri --no-rdoc' >> /home/vagrant/.gemrc;
-sudo -iu vagrant bash -c 'rbenv versions| grep 2.1.5 || rbenv install 2.1.5 --verbose';
-sudo -iu vagrant bash -c 'rbenv local 2.1.5';
-exit 0;
-  "
+  # If true, then any SSH connections made will enable agent forwarding.
+  # Default value: false
+  config.ssh.forward_agent = true
 
-	config.vm.define :kiiiosk do |kiiiosk|
-		kiiiosk.vm.hostname = "#{VAGRANT_APP_DOMAIN}"
-	end
-	config.vm.post_up_message = "\n\nProvisioning is done. 
-Visit http://#{VAGRANT_APP_DOMAIN} for test and development kiiiosk application!
-Project root directory is: /home/vagrant/#{VAGRANT_APP_DOMAIN}
-PostgreSQL User is: postgres
-SSH Access: ssh vagrant@192.168.10.201
-System password is: vagrant
-Current OS: Ubuntu GNU/Linux 14.4 x64"
+  # Share an additional folder to the guest VM. The first argument is
+  # the path on the host to the actual folder. The second argument is
+  # the path on the guest to mount the folder. And the optional third
+  # argument is a set of non-required options.
+  config.vm.synced_folder "./", "/home/vagrant/kiiiosk.dev"
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+  # Example for VirtualBox:
+  #
+  # config.vm.provider "virtualbox" do |vb|
+  #   # Don't boot with headless mode
+  #   vb.gui = true
+  #
+  #   # Use VBoxManage to customize the VM. For example to change memory:
+  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
+  # end
+  #
+  # View the documentation for the provider you're using for more
+  # information on available options.
+
+
 end
