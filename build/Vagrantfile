@@ -13,7 +13,8 @@ Vagrant.configure("2") do |config|
 	config.vm.hostname = VAGRANT_APP_DOMAIN
 	config.ssh.forward_agent = true
 	config.ssh.pty = true
-	config.vm.synced_folder "./", "/home/vagrant/kiiiosk.dev"
+	config.vm.synced_folder "./", "/home/vagrant/vagrant"
+  config.vm.synced_folder "./code", "/home/vagrant/code/kiiiosk"
 	config.hostsupdater.aliases = [VAGRANT_APP_DOMAIN, "www.#{VAGRANT_APP_DOMAIN}", "api.#{VAGRANT_APP_DOMAIN}", "admin.#{VAGRANT_APP_DOMAIN}","thumbor.#{VAGRANT_APP_DOMAIN}"]
   config.hostsupdater.aliases << "*.#{VAGRANT_APP_DOMAIN}" if RUBY_PLATFORM =~ /darwin/
 	config.vm.provider :virtualbox do |vm|
@@ -33,7 +34,7 @@ Vagrant.configure("2") do |config|
 
 	config.vm.provision "shell", inline: "bash -c \"export DEBIAN_FRONTEND=noninteractive;
 apt-get install software-properties-common;
-cp /home/vagrant/kiiiosk.dev/vagrant-conf.d/sources.list /etc/apt/sources.list;
+cp /home/vagrant/vagrant/vagrant-conf.d/sources.list /etc/apt/sources.list;
 add-apt-repository -y ppa:webupd8team/java;
 echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections;
 wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | apt-key add -
@@ -41,8 +42,10 @@ wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 add-apt-repository -y 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main';
 add-apt-repository -y 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
 apt-get update;
+sudo npm install -g bower;
 apt-get -y upgrade;
-apt-get -y install oracle-java7-installer build-essential bundler ca-certificates git imagemagick \
+apt-get -y install language-pack-ru \
+  oracle-java7-installer build-essential bundler ca-certificates git imagemagick \
   libmagickwand-dev libmysqlclient-dev lsb-release mdbtools mdbtools-dev memcached nodejs nodejs-legacy npm \
   openssl rake redis-server geoip-database-contrib libsqlite3-dev libpq-dev zsh libyaml-dev libreadline-dev \
   elasticsearch postgresql-9.4 postgresql-client-9.4 postgresql-contrib-9.4 htop mc tcpdump nano && echo 'OK' || true;
@@ -50,13 +53,14 @@ update-rc.d elasticsearch defaults 95 10;
 \"
 /usr/share/elasticsearch/bin/plugin -l|grep HQ || /usr/share/elasticsearch/bin/plugin -install royrusso/elasticsearch-HQ;
 /usr/share/elasticsearch/bin/plugin -l|grep analysis-morphology || /usr/share/elasticsearch/bin/plugin -install analysis-morphology -url http://dl.bintray.com/content/imotov/elasticsearch-plugins/org/elasticsearch/elasticsearch-analysis-morphology/1.2.0/elasticsearch-analysis-morphology-1.2.0.zip;
-cp /home/vagrant/kiiiosk.dev/vagrant-conf.d/pg_hba.conf /etc/postgresql/9.4/main && service postgresql restart;
+cp /home/vagrant/vagrant/vagrant-conf.d/pg_hba.conf /etc/postgresql/9.4/main && service postgresql restart;
 test -d /home/vagrant/.rbenv || sudo -iu vagrant bash -c \'git clone git://github.com/sstephenson/rbenv.git /home/vagrant/.rbenv';
 sudo -iu vagrant bash -c \'echo \"export PGUSER=postgres;export PATH=\"$HOME/.rbenv/bin:$PATH\"\" |tee -a  /home/vagrant/.profile';
 test -d /home/vagrant/.rbenv/plugins/ruby-build || sudo -iu vagrant git clone git://github.com/sstephenson/ruby-build.git /home/vagrant/.rbenv/plugins/ruby-build;
 sudo -iu vagrant echo 'gem: --no-ri --no-rdoc' >> /home/vagrant/.gemrc;
 sudo -iu vagrant bash -c 'rbenv versions| grep 2.1.5 || rbenv install 2.1.5 --verbose';
 sudo -iu vagrant bash -c 'rbenv local 2.1.5';
+mkdir /home/vagrant/code;
 exit 0;
   "
 

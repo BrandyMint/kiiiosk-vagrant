@@ -1,6 +1,12 @@
 
-Installation:
+Установка
 
-    vagrant box add kiiiosk.dev http://kiiiosk.ru/system/kiiiosk.box
-    vagrant init kiiiosk.dev
     vagrant up
+
+ssh-ключи для доступа к github-у автоматически копирются их хостовной машины.
+
+Вход
+
+    vagrant ssh
+
+Код основного проекта лежит в каталоге `~/code/kiiiosk`
