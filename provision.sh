@@ -1,4 +1,3 @@
-export DEBIAN_FRONTEND=noninteractive
 
 # Копируем ключи, чтобы выполнялся git clone
 cp -vr ~/.host_ssh/* ~/.ssh
