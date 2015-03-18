@@ -2,4 +2,5 @@ build/*.box
 *.box
 .vagrant
 /code/*
+/vagrant*-*
 

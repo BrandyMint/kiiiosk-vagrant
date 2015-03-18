@@ -1,52 +1,52 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-
+#
 unless Vagrant.has_plugin?("vagrant-hostsupdater")
-  raise 'vagrant-hostsupdater not installed. Try run \'vagrant plugin install vagrant-hostsupdater\''
+	raise 'vagrant-hostsupdater not installed. Try run \'vagrant plugin install vagrant-hostsupdater\''
 end
-
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-VAGRANTFILE_API_VERSION = "2"
 VAGRANT_APP_DOMAIN = "kiiiosk.dev"
+Vagrant.configure("2") do |config|
+	config.vm.box = 'ubuntu/trusty32'
+	config.vm.network :private_network, ip: '192.168.10.201'
+	config.vm.network :forwarded_port, guest: 3000, host: 3000
+	config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2222
+	config.vm.hostname = VAGRANT_APP_DOMAIN
+	config.vm.synced_folder "./", "/home/vagrant/vagrant"
+  config.vm.synced_folder "./code", "/home/vagrant/code"
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "http://kiiiosk.ru/system/kiiiosk.box"
+  config.ssh.forward_agent = true
+  config.ssh.pty = true
 
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
-
-  config.vm.network "forwarded_port", guest: 3000, host: 3000
-
+  # kiosk subdomains
   subdomains = [nil]
   subdomains += %w(www api admin thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
-
   config.hostsupdater.aliases = subdomains.map { |s| [s,VAGRANT_APP_DOMAIN].compact * '.' }
 
-  config.ssh.forward_agent = true
+	config.vm.provider :virtualbox do |vm|
+		vm.customize ["modifyvm", :id, "--name", "kiiiosk.dev"]
+		vm.customize ["modifyvm", :id, "--memory", [ENV['MERCHANTLY_VM_MEM'].to_i, 3072].max]
+		cpu_count = 2
+		if RUBY_PLATFORM =~ /linux/
+			cpu_count = `nproc`.to_i
+		elsif RUBY_PLATFORM =~ /darwin/
+			cpu_count = `sysctl -n hw.ncpu`.to_i
+		end
+		vm.customize ["modifyvm", :id, "--cpus", cpu_count]
+		vm.customize ["modifyvm", :id, "--ioapic", "on"]
+		vm.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+	end
 
-  #config.vm.synced_folder "./", "/home/vagrant/vagrant"
-  config.vm.synced_folder "./code", "/home/vagrant/code"
-  config.vm.synced_folder "~/.ssh", "/home/vagrant/.host_ssh"
+	config.vm.provision "shell", path: 'provision.sh'
 
-  config.vm.provision "shell", path: 'provision.sh', privileged: false
-
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Don't boot with headless mode
-  #   vb.gui = true
-  #
-  #   # Use VBoxManage to customize the VM. For example to change memory:
-  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
-  #
-  # View the documentation for the provider you're using for more
-  # information on available options.
-
-
+	config.vm.define :kiiiosk do |kiiiosk|
+		kiiiosk.vm.hostname = "#{VAGRANT_APP_DOMAIN}"
+	end
+	config.vm.post_up_message = "\n\nProvisioning is done. 
+Visit http://#{VAGRANT_APP_DOMAIN} for test and development kiiiosk application!
+Projects directory is: /home/vagrant/code
+PostgreSQL User is: postgres
+SSH Access: ssh vagrant@192.168.10.201
+System password is: vagrant
+Current OS: Ubuntu GNU/Linux 14.4 x64"
 end
