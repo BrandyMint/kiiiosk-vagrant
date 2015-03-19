@@ -5,7 +5,7 @@ export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/u
 
 apt-get install -y software-properties-common;
 
-test -f /etc/sudoers.d/ssh || echo 'Defaults        env_keep += "SSH_AUTH_SOCK"' /etc/sudoers.d/ssh
+test -f /etc/sudoers.d/ssh || echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/ssh
 
 tee /etc/apt/sources.list > /dev/null 2>&1 <<EOF
 deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted
@@ -81,11 +81,12 @@ sudo -iu vagrant bash -c 'git clone git@github.com:BrandyMint/merchantly.git /ho
 sudo -iu vagrant bash -c 'cd ~/code/kiiiosk.dev;
 git submodule init;
 git submodule update;
-bower install;
+bower --config.interactive=false install;
 bundle;
 bundle exec rake db:create;
 bundle exec rake db:migrate;
 bundle exec rake db:seed;
-'
+exit 0;
+';
 
 exit 0;
