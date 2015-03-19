@@ -5,6 +5,7 @@ export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/u
 
 apt-get install -y software-properties-common;
 
+test -f /etc/sudoers.d/ssh || echo 'Defaults        env_keep += "SSH_AUTH_SOCK"' /etc/sudoers.d/ssh
 
 tee /etc/apt/sources.list > /dev/null 2>&1 <<EOF
 deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted
@@ -47,6 +48,8 @@ apt-get -y install language-pack-ru \
   elasticsearch postgresql-9.4 postgresql-client-9.4 postgresql-contrib-9.4 htop mc tcpdump nano && echo 'OK' || true;
 
 update-rc.d elasticsearch defaults 95 10;
+
+test -f /etc/ssh/ssh_known_hosts && grep `ssh-keyscan -t rsa github.com` /etc/ssh/ssh_known_hosts || ssh-keyscan -t rsa github.com |tee /etc/ssh/ssh_known_hosts
 /usr/share/elasticsearch/bin/plugin -l|grep HQ || /usr/share/elasticsearch/bin/plugin -install royrusso/elasticsearch-HQ;
 /usr/share/elasticsearch/bin/plugin -l|grep analysis-morphology || /usr/share/elasticsearch/bin/plugin -install analysis-morphology -url http://dl.bintray.com/content/imotov/elasticsearch-plugins/org/elasticsearch/elasticsearch-analysis-morphology/1.2.0/elasticsearch-analysis-morphology-1.2.0.zip;
 
@@ -59,30 +62,30 @@ host    all             all             127.0.0.1/32            trust
 host    all             all             ::1/128                 trust
 EOF
 
-grep PGUSER=postgres /home/vagrant/.profile || sudo -iu vagrant echo "export PGUSER=postgres;" >> $HOME/.profile
-grep "PATH=/home/vagrant/.rbenv" /home/vagrant/.profile  || sudo -iu vagrant echo "export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> $HOME/.profile
-grep "rbenv init" /home/vagrant/.profile || sudo -iu vagrant echo 'eval "$(rbenv init -)"'>> $HOME/.profile
+grep PGUSER=postgres /home/vagrant/.profile || sudo -iu vagrant echo "export PGUSER=postgres;" >> /home/vagrant/.profile
+grep "PATH=/home/vagrant/.rbenv" /home/vagrant/.profile  || sudo -iu vagrant echo "export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /home/vagrant/.profile
+grep "rbenv init" /home/vagrant/.profile || sudo -iu vagrant echo 'eval "$(rbenv init -)"'>> /home/vagrant/.profile
 
 
 sudo -iu vagrant git clone git://github.com/sstephenson/rbenv.git /home/vagrant/.rbenv;
 test -d /home/vagrant/.rbenv/plugins/ruby-build || sudo -iu vagrant git clone git://github.com/sstephenson/ruby-build.git /home/vagrant/.rbenv/plugins/ruby-build;
 sudo -iu vagrant echo 'gem: --no-ri --no-rdoc' >> /home/vagrant/.gemrc;
-sudo -iu vagrant rbenv versions| grep 2.1.5 || rbenv install 2.1.5 --verbose;
-sudo -iu vagrant rbenv local 2.1.5;
-sudo -iu vagrant rbenv exec gem install bundler
-test -d /home/vagrant/code || mkdir /home/vagrant/code;
+sudo -iu vagrant bash -c 'source /home/vagrant/.profile; rbenv versions| grep 2.1.5 || rbenv install 2.1.5 --verbose';
+sudo -iu vagrant bash -c 'source /home/vagrant/.profile; rbenv local 2.1.5';
+sudo -iu vagrant bash -c 'source /home/vagrant/.profile; rbenv exec gem install bundler';
+sudo -iu vagrant bash -c 'test -d /home/vagrant/code || mkdir /home/vagrant/code';
 apt-get clean
 
-git clone git@github.com:BrandyMint/merchantly.git ~/code/kiiiosk.dev
+sudo -iu vagrant bash -c 'git clone git@github.com:BrandyMint/merchantly.git /home/vagrant/code/kiiiosk.dev'
 
-cd ~/code/kiiiosk.dev
-
-git submodule init
-git submodule update
-bower install
-bundle
-bundle exec rake db:create
-bundle exec rake db:migrate
-bundle exec rake db:seed
+sudo -iu vagrant bash -c 'cd ~/code/kiiiosk.dev;
+git submodule init;
+git submodule update;
+bower install;
+bundle;
+bundle exec rake db:create;
+bundle exec rake db:migrate;
+bundle exec rake db:seed;
+'
 
 exit 0;
