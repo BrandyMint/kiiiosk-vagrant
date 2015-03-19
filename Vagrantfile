@@ -14,6 +14,9 @@ Vagrant.configure("2") do |config|
 	config.vm.synced_folder "./", "/home/vagrant/vagrant"
   config.vm.synced_folder "./code", "/home/vagrant/code"
 
+  # ssh for windows
+  # https://github.com/DSpace/vagrant-dspace/blob/master/Vagrantfile#L153
+  #
   config.ssh.forward_agent = true
   config.ssh.pty = true
 
@@ -38,6 +41,7 @@ Vagrant.configure("2") do |config|
 	end
 
 	config.vm.provision "shell", path: 'provision.sh'
+  config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
 
 	config.vm.define :kiiiosk do |kiiiosk|
 		kiiiosk.vm.hostname = "#{VAGRANT_APP_DOMAIN}"
