@@ -1,13 +1,13 @@
 
 Установка
 
+    ssh-add ~/.ssh/id_rsa
+    vagrant plugin install vagrant-hostsupdater
+
     vagrant up
-
-
-Добавьт ваш ключ в ssh-agent через ssh-add
 
 Вход
 
     vagrant ssh
 
-Код основного проекта лежит в каталоге `~/code/kiiiosk`
+Код основного проекта лежит в каталоге `~/code/kiiiosk.dev`
