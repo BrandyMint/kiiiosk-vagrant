@@ -49,7 +49,7 @@ apt-get -y install language-pack-ru \
 
 update-rc.d elasticsearch defaults 95 10;
 
-test -f /etc/ssh/ssh_known_hosts && grep `ssh-keyscan -t rsa github.com` /etc/ssh/ssh_known_hosts || ssh-keyscan -t rsa github.com |tee /etc/ssh/ssh_known_hosts
+test -f /etc/ssh/ssh_known_hosts && grep "`ssh-keyscan -t rsa github.com`" /etc/ssh/ssh_known_hosts || ssh-keyscan -t rsa github.com |tee /etc/ssh/ssh_known_hosts
 /usr/share/elasticsearch/bin/plugin -l|grep HQ || /usr/share/elasticsearch/bin/plugin -install royrusso/elasticsearch-HQ;
 /usr/share/elasticsearch/bin/plugin -l|grep analysis-morphology || /usr/share/elasticsearch/bin/plugin -install analysis-morphology -url http://dl.bintray.com/content/imotov/elasticsearch-plugins/org/elasticsearch/elasticsearch-analysis-morphology/1.2.0/elasticsearch-analysis-morphology-1.2.0.zip;
 
@@ -61,7 +61,7 @@ local   all             all                                     trust
 host    all             all             127.0.0.1/32            trust
 host    all             all             ::1/128                 trust
 EOF
-
+service postgresql restart;
 grep PGUSER=postgres /home/vagrant/.profile || sudo -iu vagrant echo "export PGUSER=postgres;" >> /home/vagrant/.profile
 grep "PATH=/home/vagrant/.rbenv" /home/vagrant/.profile  || sudo -iu vagrant echo "export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /home/vagrant/.profile
 grep "rbenv init" /home/vagrant/.profile || sudo -iu vagrant echo 'eval "$(rbenv init -)"'>> /home/vagrant/.profile
@@ -83,8 +83,8 @@ git submodule init;
 git submodule update;
 bower --config.interactive=false install;
 bundle;
-ln -s ./config/database.yml.example ./config/database.yml;
-ln -s ./config/application.local.example.yml ./config/application.local.yml;
+ln -s ../config/database.yml.example config/database.yml;
+ln -s ../config/application.local.example.yml config/application.local.yml;
 bundle exec rake db:create;
 bundle exec rake db:migrate;
 bundle exec rake db:seed;
