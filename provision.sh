@@ -2,7 +2,10 @@
 
 export DEBIAN_FRONTEND=noninteractive;
 export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
+exec &> >(tee -a "/home/vagrant/provision.log") # Provision logging
+echo '-------------------------'
+date
+echo '-------------------------'
 apt-get install -y software-properties-common;
 
 test -f /etc/sudoers.d/ssh || echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/ssh
@@ -62,31 +65,36 @@ host    all             all             127.0.0.1/32            trust
 host    all             all             ::1/128                 trust
 EOF
 service postgresql restart;
-grep PGUSER=postgres /home/vagrant/.profile || sudo -iu vagrant echo "export PGUSER=postgres;" >> /home/vagrant/.profile
-grep "PATH=/home/vagrant/.rbenv" /home/vagrant/.profile  || sudo -iu vagrant echo "export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /home/vagrant/.profile
-grep "rbenv init" /home/vagrant/.profile || sudo -iu vagrant echo 'eval "$(rbenv init -)"'>> /home/vagrant/.profile
 
+sudo -iu vagrant bash -c 'test -d /home/vagrant/.oh-my-zsh || git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git /home/vagrant/.oh-my-zsh;
+cp -v /home/vagrant/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc;'
+grep PGUSER=postgres /home/vagrant/.zshrc || sudo -iu vagrant echo "export PGUSER=postgres;" >> /home/vagrant/.zshrc
+grep RAILS_ENV=development /home/vagrant/.zshrc || sudo -iu vagrant echo "RAILS_ENV=development;" >> /home/vagrant/.zshrc
+grep "PATH=/home/vagrant/.rbenv" /home/vagrant/.zshrc  || sudo -iu vagrant echo "export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /home/vagrant/.zshrc
+grep "rbenv init" /home/vagrant/.zshrc || sudo -iu vagrant echo 'eval "$(rbenv init -)"'>> /home/vagrant/.zshrc
+
+usermod -s /usr/bin/zsh vagrant
 
 sudo -iu vagrant git clone git://github.com/sstephenson/rbenv.git /home/vagrant/.rbenv;
 test -d /home/vagrant/.rbenv/plugins/ruby-build || sudo -iu vagrant git clone git://github.com/sstephenson/ruby-build.git /home/vagrant/.rbenv/plugins/ruby-build;
 sudo -iu vagrant echo 'gem: --no-ri --no-rdoc' >> /home/vagrant/.gemrc;
-sudo -iu vagrant bash -c 'source /home/vagrant/.profile; rbenv versions| grep 2.1.5 || rbenv install 2.1.5 --verbose';
-sudo -iu vagrant bash -c 'source /home/vagrant/.profile; rbenv local 2.1.5';
-sudo -iu vagrant bash -c 'source /home/vagrant/.profile; rbenv exec gem install bundler';
+sudo -iu vagrant bash -c 'source /home/vagrant/.zshrc; rbenv versions| grep 2.1.5 || rbenv install 2.1.5 --verbose';
+sudo -iu vagrant bash -c 'source /home/vagrant/.zshrc; rbenv local 2.1.5';
+sudo -iu vagrant bash -c 'source /home/vagrant/.zshrc; rbenv exec gem install bundler';
 sudo -iu vagrant bash -c 'test -d /home/vagrant/code || mkdir /home/vagrant/code';
 apt-get clean
 
-sudo -iu vagrant bash -c 'test -d /home/vagrant/code/kiiiosk.dev || git clone git@github.com:BrandyMint/merchantly.git /home/vagrant/code/kiiiosk.dev';
+sudo -iu vagrant bash -c 'test -d /home/vagrant/code/kiiiosk.dev || git clone -b develop git@github.com:BrandyMint/merchantly.git /home/vagrant/code/kiiiosk.dev';
 
-sudo -iu vagrant bash -c 'cd ~/code/kiiiosk.dev;
+sudo -iu vagrant bash -c 'cd ~/code/kiiiosk.dev; source /home/vagrant/.zshrc;
 git submodule init;
 git submodule update;
 bower --config.interactive=false install;
-bundle;
-ln -s database.yml.example config/database.yml;
-bundle exec rake db:create;
-bundle exec rake db:migrate;
-bundle exec rake db:seed;
+rbenv exec bundle install --jobs `nproc` --quiet;
+ln -s ../config/database.yml.example config/database.yml;
+ln -s ../config/application.local.example.yml config/application.local.yml;
+ln -s ../config/secrets.yml.example config/secrets.yml;
+rbenv exec bundle exec rake db:create db:migrate db:seed;
 exit 0;
 ';
 
