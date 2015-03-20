@@ -83,8 +83,8 @@ git submodule init;
 git submodule update;
 bower --config.interactive=false install;
 bundle;
-ln -s ./config/database.yml.example ./config/database.yml
-ln -s ./config/application.local.example.yml ./config/application.local.yml
+ln -s ./config/database.yml.example ./config/database.yml;
+ln -s ./config/application.local.example.yml ./config/application.local.yml;
 bundle exec rake db:create;
 bundle exec rake db:migrate;
 bundle exec rake db:seed;
