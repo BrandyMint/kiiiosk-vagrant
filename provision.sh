@@ -76,15 +76,14 @@ sudo -iu vagrant bash -c 'source /home/vagrant/.profile; rbenv exec gem install 
 sudo -iu vagrant bash -c 'test -d /home/vagrant/code || mkdir /home/vagrant/code';
 apt-get clean
 
-sudo -iu vagrant bash -c 'git clone git@github.com:BrandyMint/merchantly.git /home/vagrant/code/kiiiosk.dev'
+sudo -iu vagrant bash -c 'test -d /home/vagrant/code/kiiiosk.dev || git clone git@github.com:BrandyMint/merchantly.git /home/vagrant/code/kiiiosk.dev';
 
 sudo -iu vagrant bash -c 'cd ~/code/kiiiosk.dev;
 git submodule init;
 git submodule update;
 bower --config.interactive=false install;
 bundle;
-ln -s ../config/database.yml.example config/database.yml;
-ln -s ../config/application.local.example.yml config/application.local.yml;
+ln -s database.yml.example config/database.yml;
 bundle exec rake db:create;
 bundle exec rake db:migrate;
 bundle exec rake db:seed;
