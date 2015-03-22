@@ -2,23 +2,57 @@
 # vi: set ft=ruby :
 #
 unless Vagrant.has_plugin?("vagrant-hostsupdater")
+  #%x(vagrant plugin install vagrant-omnibus) unless Vagrant.has_plugin?('vagrant-omnibus')
 	raise 'vagrant-hostsupdater not installed. Try run \'vagrant plugin install vagrant-hostsupdater\''
 end
 VAGRANT_APP_DOMAIN = "kiiiosk.dev"
+VAGRANT_IP = '192.168.10.201'
 Vagrant.configure("2") do |config|
-	config.vm.box = 'ubuntu/trusty32'
-	config.vm.network :private_network, ip: '192.168.10.201'
+	#config.vm.box = 'ubuntu/trusty32'
+  # Should work on OSX 10.9, VirtualBox 4.3.2, Vagrant 1.3.5
+  config.vm.box = "ubuntu-14.04-LTS"
+  config.vm.box_url =
+    "http://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+
+	config.vm.network :private_network, ip: VAGRANT_IP
+  # config.vm.network :public_network, :bridge => 'en0: Wi-Fi (AirPort)'
 	config.vm.network :forwarded_port, guest: 3000, host: 3000
+  config.vm.network :forwarded_port, guest: 80, host: 8080
+
 	config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2222
 	config.vm.hostname = VAGRANT_APP_DOMAIN
 	config.vm.synced_folder "./", "/home/vagrant/vagrant"
   config.vm.synced_folder "./code", "/home/vagrant/code"
 
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :machine
+    # OPTIONAL: If you are using VirtualBox, you might want to use that to enable
+    # NFS for shared folders. This is also very useful for vagrant-libvirt if you
+    # want bi-directional sync
+    config.cache.synced_folder_opts = {
+      type: :nfs,
+      # The nolock option can be useful for an NFSv3 client that wants to avoid the
+      # NLM sideband protocol. Without this option, apt-get might hang if it tries
+      # to lock files needed for /var/cache/* operations. All of this can be avoided
+      # by using NFSv4 everywhere. Please note that the tcp option is not the default.
+      mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
+    } 
+  end
+
+  #vagrant plugin install vagrant-plugin-bundler
+  #config.plugin.deps do
+    ##depend 'vagrant-omnibus', '1.0.2'
+  #end
+  #config.plugin.depend 'vagrant-omnibus', '1.0.2'
   # ssh for windows
   # https://github.com/DSpace/vagrant-dspace/blob/master/Vagrantfile#L153
   #
   config.ssh.forward_agent = true
-  config.ssh.pty = true
+
+  # не нужно включать pty
+  # 1. Это приводит к тому что мы не видим процессе провизионинга
+  # 2. Из-за этого провизионинг часто не может завершиться и висит в конце
+  config.ssh.pty = false
 
   # kiosk subdomains
   subdomains = [nil]
@@ -28,29 +62,45 @@ Vagrant.configure("2") do |config|
 
 	config.vm.provider :virtualbox do |vm|
 		vm.customize ["modifyvm", :id, "--name", "kiiiosk.dev"]
-		vm.customize ["modifyvm", :id, "--memory", [ENV['MERCHANTLY_VM_MEM'].to_i, 3072].max]
-		cpu_count = 2
-		if RUBY_PLATFORM =~ /linux/
-			cpu_count = `nproc`.to_i
-		elsif RUBY_PLATFORM =~ /darwin/
-			cpu_count = `sysctl -n hw.ncpu`.to_i
-		end
-		vm.customize ["modifyvm", :id, "--cpus", cpu_count]
+    if ENV['MERCHANTLY_VM_MEM']
+      vm.customize ["modifyvm", :id, "--memory", [ENV['MERCHANTLY_VM_MEM'].to_i, 3072].max]
+    end
+
+    # vagrant-faster сам подбирает нужные парметры
+    # на mac pro 4 cpu, 8Gb отдает 2 cpu и 2Gb
+		#cpu_count = 2
+		#if RUBY_PLATFORM =~ /linux/
+			#cpu_count = `nproc`.to_i
+		#elsif RUBY_PLATFORM =~ /darwin/
+			#cpu_count = `sysctl -n hw.ncpu`.to_i
+		#end
+		#vm.customize ["modifyvm", :id, "--cpus", cpu_count]
 		vm.customize ["modifyvm", :id, "--ioapic", "on"]
 		vm.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 	end
 
-	config.vm.provision "shell", path: 'provision.sh'
-  config.vm.provision "file", source: "~/.gitconfig", destination: ".gitconfig"
+  # Example from Stan
+  # https://gist.github.com/senotrusov/f5665286b593edd054a3
+  #
+	config.vm.provision "shell", path: 'provisions/system.sh'
+  config.vm.provision "shell", path: 'provisions/locale.sh'
+  config.vm.provision "shell", path: 'provisions/elastic.sh'
+  config.vm.provision "shell", path: 'provisions/postgresql.sh'
+  config.vm.provision "shell", path: 'provisions/nodejs.sh'
+  config.vm.provision "shell", path: 'provisions/shell.sh', privileged: false
+  config.vm.provision "shell", path: 'provisions/ruby.sh',  privileged: false
+  config.vm.provision "shell", path: 'provisions/geoip.sh'
+  config.vm.provision "shell", path: 'provisions/kiosk.sh', privileged: false
 
 	config.vm.define :kiiiosk do |kiiiosk|
 		kiiiosk.vm.hostname = "#{VAGRANT_APP_DOMAIN}"
 	end
+
 	config.vm.post_up_message = "\n\nProvisioning is done. 
 Visit http://#{VAGRANT_APP_DOMAIN} for test and development kiiiosk application!
 Projects directory is: /home/vagrant/code
 PostgreSQL User is: postgres
-SSH Access: ssh vagrant@192.168.10.201
+SSH Access: ssh vagrant@#{VAGRANT_IP}
 System password is: vagrant
 Current OS: Ubuntu GNU/Linux 14.4 x64"
 end
