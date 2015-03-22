@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+mkdir ~/code
+
 bundle
 
 vagrant plugin install vagrant-ansible-local

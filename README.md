@@ -2,8 +2,8 @@
 Установка
 
     ssh-add ~/.ssh/id_rsa
-    mkdir ./code
-    vagrant plugin install vagrant-hostsupdater
+
+    ./setup
 
     vagrant up
 
