@@ -82,7 +82,7 @@ Vagrant.configure("2") do |config|
   # Example from Stan
   # https://gist.github.com/senotrusov/f5665286b593edd054a3
   #
-	config.vm.provision "shell", path: 'provisions/system.sh'
+  config.vm.provision "shell", path: 'provisions/system.sh'
   config.vm.provision "shell", path: 'provisions/locale.sh'
   config.vm.provision "shell", path: 'provisions/elastic.sh'
   config.vm.provision "shell", path: 'provisions/postgresql.sh'
