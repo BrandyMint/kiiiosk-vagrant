@@ -8,7 +8,12 @@ date
 echo '-------------------------'
 apt-get install -y software-properties-common;
 
-test -f /etc/sudoers.d/ssh || echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/ssh
+test -f /etc/sudoers.d/ssh || echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/ssh;
+locale-gen ru_RU.UTF-8;
+localedef -i ru_RU -f UTF-8 ru_RU.UTF-8;
+tee /etc/default/locale > /dev/null 2>&1 <<EOF
+LANG="ru_RU.UTF-8"
+EOF
 
 tee /etc/apt/sources.list > /dev/null 2>&1 <<EOF
 deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted
@@ -69,10 +74,11 @@ service postgresql restart;
 sudo -iu vagrant bash -c 'test -d /home/vagrant/.oh-my-zsh || git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git /home/vagrant/.oh-my-zsh;
 cp -v /home/vagrant/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc;'
 grep PGUSER=postgres /home/vagrant/.zshrc || sudo -iu vagrant echo "export PGUSER=postgres;" >> /home/vagrant/.zshrc
-grep RAILS_ENV=development /home/vagrant/.zshrc || sudo -iu vagrant echo "RAILS_ENV=development;" >> /home/vagrant/.zshrc
 grep "PATH=/home/vagrant/.rbenv" /home/vagrant/.zshrc  || sudo -iu vagrant echo "export PATH=/home/vagrant/.rbenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /home/vagrant/.zshrc
 grep "rbenv init" /home/vagrant/.zshrc || sudo -iu vagrant echo 'eval "$(rbenv init -)"'>> /home/vagrant/.zshrc
-
+sed -i -e "/^export ZSH=/ c\\
+export ZSH=/home/vagrant/.oh-my-zsh
+" /home/vagrant/.zshrc
 usermod -s /usr/bin/zsh vagrant
 
 sudo -iu vagrant git clone git://github.com/sstephenson/rbenv.git /home/vagrant/.rbenv;
@@ -90,12 +96,11 @@ sudo -iu vagrant bash -c 'cd ~/code/kiiiosk.dev; source /home/vagrant/.zshrc;
 git submodule init;
 git submodule update;
 bower --config.interactive=false install;
-rbenv exec bundle install --jobs `nproc` --quiet;
+rbenv exec bundle install --jobs `nproc`;
 ln -s ../config/database.yml.example config/database.yml;
 ln -s ../config/application.local.example.yml config/application.local.yml;
 ln -s ../config/secrets.yml.example config/secrets.yml;
-rbenv exec bundle exec rake db:create db:migrate db:seed;
-exit 0;
-';
-
-exit 0;
+rbenv exec bundle exec rake db:create;
+rbenv exec bundle exec rake db:migrate;';
+echo 'provision done'
+#rbenv exec bundle exec rake db:seed && echo $? && exit 0 || echo fail; true;
