@@ -101,6 +101,8 @@ ln -s ../config/database.yml.example config/database.yml;
 ln -s ../config/application.local.example.yml config/application.local.yml;
 ln -s ../config/secrets.yml.example config/secrets.yml;
 rbenv exec bundle exec rake db:create;
-rbenv exec bundle exec rake db:migrate;';
+rbenv exec bundle exec rake db:migrate db:seed;';
 echo 'provision done'
-#rbenv exec bundle exec rake db:seed && echo $? && exit 0 || echo fail; true;
+# По соверенно не понятным причинам ssh сессия зависает после провижена.
+# Пока не решили почему, такой вот грязный хак.
+for pid in `ps aux|grep -v grep|grep 'sshd: vagrant'|awk '{print $2}'`; do kill $pid; done
