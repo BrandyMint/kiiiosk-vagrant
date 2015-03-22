@@ -19,8 +19,8 @@ apt-get -y install git htop mc tmux
 
 #apt-get -y install libnotify-bin
 
-# Vim with ruby support
-apt-get -y install vim-nox
+# Programming tools
+apt-get -y install vim-nox exuberant-ctags silversearcher-ag
 
 # libmysqlclient-dev 
 # apt-get -y install sqlite3 libsqlite3-dev 

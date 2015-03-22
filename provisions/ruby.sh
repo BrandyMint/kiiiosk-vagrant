@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/bin/bash
 
 # Ensure SQLite is installed
 sudo apt-get install -y sqlite3 libsqlite3-dev
@@ -16,18 +16,17 @@ test -d ~/.rbenv || \
 test -d /home/vagrant/.rbenv/plugins/ruby-build || \
   git clone git://github.com/sstephenson/ruby-build.git /home/vagrant/.rbenv/plugins/ruby-build
 
-# zsh knowns about rbenv by plugin
-source ~/.zshrc
+export RBENV_ROOT=/home/vagrant/.rbenv
+export PATH=${RBENV_ROOT}/bin:$PATH
 
-#rbenv versions | grep 2.1.5 || 
+eval "$(rbenv init)"
+
+rbenv versions | grep 2.1.5 || 
 rbenv install 2.1.5 --verbose
 
 rbenv global 2.1.5
 
-rbenv version
-rbenv rehash
-ruby -v
-gem list | grep bundler || gem install bundler
+rbenv exec gem list | grep bundler || rbenv exec gem install bundler
 
 rbenv rehash
 
