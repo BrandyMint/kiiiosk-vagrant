@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
 
   # Speedup syncing folders
   # http://chase-seibert.github.io/blog/2014/03/09/vagrant-cachefilesd.html
-  config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
+  #config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
 
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.scope = :machine
@@ -50,7 +50,7 @@ Vagrant.configure("2") do |config|
 
   # kiosk subdomains
   subdomains = [nil]
-  subdomains += %w(www api admin test demo shop assets thumbor)
+  subdomains += %w(www admin test demo shop assets thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
   config.hostsupdater.aliases = subdomains.map { |s| [s,VAGRANT_APP_DOMAIN].compact * '.' }
 
