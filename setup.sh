@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+ssh-add ~/.ssh/id_rsa
+
 mkdir ~/code
 
 bundle

@@ -9,6 +9,7 @@ git clone --depth=1 https://github.com/robbyrussell/oh-my-zsh.git /home/vagrant/
 sudo chsh -s $(which zsh) $USER
 
 echo "Install dotfiles"
+#REPO="git@github.com:dapi/dotfiles.git"
 git clone https://github.com/dapi/dotfiles.git
 
 ./dotfiles/install.sh

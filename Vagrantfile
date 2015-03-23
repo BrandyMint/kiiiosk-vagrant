@@ -17,26 +17,29 @@ Vagrant.configure("2") do |config|
 	config.vm.network :private_network, ip: VAGRANT_IP
   # config.vm.network :public_network, :bridge => 'en0: Wi-Fi (AirPort)'
 	config.vm.network :forwarded_port, guest: 3000, host: 3000
-  config.vm.network :forwarded_port, guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 80, host: 3000
 
 	config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2222
 	config.vm.hostname = VAGRANT_APP_DOMAIN
 	config.vm.synced_folder "./", "/home/vagrant/vagrant"
-  config.vm.synced_folder "./code", "/home/vagrant/code"
+
+  # Speedup syncing folders
+  # http://chase-seibert.github.io/blog/2014/03/09/vagrant-cachefilesd.html
+  config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
 
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.scope = :machine
     # OPTIONAL: If you are using VirtualBox, you might want to use that to enable
     # NFS for shared folders. This is also very useful for vagrant-libvirt if you
     # want bi-directional sync
-    config.cache.synced_folder_opts = {
-      type: :nfs,
-      # The nolock option can be useful for an NFSv3 client that wants to avoid the
-      # NLM sideband protocol. Without this option, apt-get might hang if it tries
-      # to lock files needed for /var/cache/* operations. All of this can be avoided
-      # by using NFSv4 everywhere. Please note that the tcp option is not the default.
-      mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
-    } 
+    #config.cache.synced_folder_opts = {
+      #type: :nfs,
+      ## The nolock option can be useful for an NFSv3 client that wants to avoid the
+      ## NLM sideband protocol. Without this option, apt-get might hang if it tries
+      ## to lock files needed for /var/cache/* operations. All of this can be avoided
+      ## by using NFSv4 everywhere. Please note that the tcp option is not the default.
+      #mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
+    #} 
   end
 
   # ssh for windows
@@ -47,7 +50,7 @@ Vagrant.configure("2") do |config|
 
   # kiosk subdomains
   subdomains = [nil]
-  subdomains += %w(www api admin thumbor)
+  subdomains += %w(www api admin test demo shop assets thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
   config.hostsupdater.aliases = subdomains.map { |s| [s,VAGRANT_APP_DOMAIN].compact * '.' }
 
@@ -74,10 +77,12 @@ Vagrant.configure("2") do |config|
   # https://gist.github.com/senotrusov/f5665286b593edd054a3
   #
   config.vm.provision "shell", path: 'provisions/system.sh'
+  config.vm.provision "shell", path: 'provisions/cachefilesd.sh'
   config.vm.provision "shell", path: 'provisions/locale.sh'
   config.vm.provision "shell", path: 'provisions/elastic.sh'
   config.vm.provision "shell", path: 'provisions/postgresql.sh'
   config.vm.provision "shell", path: 'provisions/nodejs.sh'
+  config.vm.provision "shell", path: 'provisions/tmux.sh',  privileged: false
   config.vm.provision "shell", path: 'provisions/shell.sh', privileged: false
   config.vm.provision "shell", path: 'provisions/ruby.sh',  privileged: false
   config.vm.provision "shell", path: 'provisions/geoip.sh'
