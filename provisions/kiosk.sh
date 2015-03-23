@@ -5,8 +5,7 @@ source ~/.zshrc
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Пока нет нужды
-# apt-get -y install libmagickwand-dev imagemagick 
+sudo apt-get -y install libmagickwand-dev imagemagick 
 
 sudo apt-get -y install memcached redis-server 
 

@@ -39,19 +39,10 @@ Vagrant.configure("2") do |config|
     } 
   end
 
-  #vagrant plugin install vagrant-plugin-bundler
-  #config.plugin.deps do
-    ##depend 'vagrant-omnibus', '1.0.2'
-  #end
-  #config.plugin.depend 'vagrant-omnibus', '1.0.2'
   # ssh for windows
   # https://github.com/DSpace/vagrant-dspace/blob/master/Vagrantfile#L153
   #
   config.ssh.forward_agent = true
-
-  # не нужно включать pty
-  # 1. Это приводит к тому что мы не видим процессе провизионинга
-  # 2. Из-за этого провизионинг часто не может завершиться и висит в конце
   config.ssh.pty = false
 
   # kiosk subdomains
