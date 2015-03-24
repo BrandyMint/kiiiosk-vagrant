@@ -2,9 +2,9 @@
 
 ssh-add ~/.ssh/id_rsa
 
-mkdir ~/code
+#mkdir ~/code
 
-bundle
+#bundle
 
 vagrant plugin install vagrant-ansible-local
 vagrant plugin install vagrant-hostsupdater

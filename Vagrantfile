@@ -17,7 +17,8 @@ Vagrant.configure("2") do |config|
 	config.vm.network :private_network, ip: VAGRANT_IP
   # config.vm.network :public_network, :bridge => 'en0: Wi-Fi (AirPort)'
 	config.vm.network :forwarded_port, guest: 3000, host: 3000
-  config.vm.network :forwarded_port, guest: 80, host: 3000
+  config.vm.network :forwarded_port, guest: 3001, host: 3001
+  #config.vm.network :forwarded_port, guest: 80, host: 3000
 
 	config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2222
 	config.vm.hostname = VAGRANT_APP_DOMAIN
@@ -56,8 +57,8 @@ Vagrant.configure("2") do |config|
 
 	config.vm.provider :virtualbox do |vm|
 		vm.customize ["modifyvm", :id, "--name", "kiiiosk.dev"]
-    if ENV['MERCHANTLY_VM_MEM']
-      vm.customize ["modifyvm", :id, "--memory", [ENV['MERCHANTLY_VM_MEM'].to_i, 3072].max]
+    if ENV['KIOSK_VM_MEM']
+      vm.customize ["modifyvm", :id, "--memory", [ENV['KIOSK_VM_MEM'].to_i, 2048].max]
     end
 
     # vagrant-faster сам подбирает нужные парметры

@@ -22,6 +22,8 @@ apt-get -y install git htop mc
 # Programming tools
 apt-get -y install vim-nox exuberant-ctags silversearcher-ag
 
+apt-get -y remove puppet-common chef-zero
+
 # libmysqlclient-dev 
 # apt-get -y install sqlite3 libsqlite3-dev 
 
