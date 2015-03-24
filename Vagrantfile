@@ -26,7 +26,9 @@ Vagrant.configure("2") do |config|
 
   # Speedup syncing folders
   # http://chase-seibert.github.io/blog/2014/03/09/vagrant-cachefilesd.html
-  #config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
+  unless ENV['USER']=='danil'
+    config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
+  end
 
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.scope = :machine
