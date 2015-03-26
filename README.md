@@ -26,3 +26,23 @@ Vagrant 1.7.2
     vagrant ssh
 
 Код основного проекта лежит в каталоге `~/code/kiiiosk.dev`
+
+
+Windows:
+---
+Если у вас зависает создание виртуальной машины, (выглядит примерно так)
+
+    $ vagrant up
+    Bringing machine 'default' up with 'hyperv' provider...
+    ==> default: Verifying Hyper-V is enabled...
+
+Лечить:
+mingw:
+
+    export VBOX_INSTALL_PATH="C:\Program Files\Oracle\VirtualBox"
+    
+Default:
+
+    SET VBOX_INSTALL_PATH="C:\Program Files\Oracle\VirtualBox"
+   
+ И повторите vagrant up
