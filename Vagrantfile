@@ -18,10 +18,12 @@ Vagrant.configure("2") do |config|
   # config.vm.network :public_network, :bridge => 'en0: Wi-Fi (AirPort)'
 	config.vm.network :forwarded_port, guest: 3000, host: 3000
   config.vm.network :forwarded_port, guest: 3001, host: 3001
+  config.vm.network :forwarded_port, guest: 9000, host: 9000
+  config.vm.network :forwarded_port, guest: 9001, host: 9001
   #config.vm.network :forwarded_port, guest: 80, host: 3000
 
 	config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2222
-	config.vm.hostname = VAGRANT_APP_DOMAIN
+  config.vm.hostname = 'vagrant'
 	config.vm.synced_folder "./", "/home/vagrant/vagrant"
 
   # Speedup syncing folders
