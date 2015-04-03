@@ -6,6 +6,7 @@ unless Vagrant.has_plugin?("vagrant-hostsupdater")
 	raise 'vagrant-hostsupdater not installed. Try run \'vagrant plugin install vagrant-hostsupdater\''
 end
 VAGRANT_APP_DOMAIN = "kiiiosk.dev"
+VAGRANT_HOSTNAME = "vagrant"
 VAGRANT_IP = '192.168.10.201'
 Vagrant.configure("2") do |config|
 	#config.vm.box = 'ubuntu/trusty32'
@@ -60,14 +61,14 @@ Vagrant.configure("2") do |config|
 
   # kiosk subdomains
   subdomains = [nil]
-  subdomains += %w(www admin test demo shop assets thumbor)
+  subdomains += %w(www admin test demo shop assets wannabe cc thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
   config.hostsupdater.aliases = subdomains.map { |s| [s,VAGRANT_APP_DOMAIN].compact * '.' }
 
 	config.vm.provider :virtualbox do |vm|
-		vm.customize ["modifyvm", :id, "--name", "kiiiosk.dev"]
-    if ENV['KIOSK_VM_MEM']
-      vm.customize ["modifyvm", :id, "--memory", [ENV['KIOSK_VM_MEM'].to_i, 2048].max]
+		vm.customize ["modifyvm", :id, "--name", VAGRANT_APP_DOMAIN]
+    if ENV['VM_MEM']
+      vm.customize ["modifyvm", :id, "--memory", [ENV['VM_MEM'].to_i, 2048].max]
     end
 
     # vagrant-faster сам подбирает нужные парметры
@@ -99,7 +100,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: 'provisions/kiosk.sh', privileged: false
 
 	config.vm.define :kiiiosk do |kiiiosk|
-		kiiiosk.vm.hostname = "#{VAGRANT_APP_DOMAIN}"
+		kiiiosk.vm.hostname = VAGRANT_HOSTNAME
 	end
 
 	config.vm.post_up_message = "\n\nProvisioning is done. 
