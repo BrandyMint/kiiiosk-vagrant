@@ -61,14 +61,14 @@ Vagrant.configure("2") do |config|
 
   # kiosk subdomains
   subdomains = [nil]
-  subdomains += %w(www admin test demo shop assets wannabe cc thumbor)
+  subdomains += %w(www admin test demo shop assets wannabe cc app api thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
   config.hostsupdater.aliases = subdomains.map { |s| [s,VAGRANT_APP_DOMAIN].compact * '.' }
 
 	config.vm.provider :virtualbox do |vm|
 		vm.customize ["modifyvm", :id, "--name", VAGRANT_APP_DOMAIN]
     if ENV['VM_MEM']
-      vm.customize ["modifyvm", :id, "--memory", [ENV['VM_MEM'].to_i, 2048].max]
+      vm.customize ["modifyvm", :id, "--memory", [ENV['VM_MEM'].to_i, 3072].max]
     end
 
     # vagrant-faster сам подбирает нужные парметры
