@@ -15,7 +15,7 @@ apt-get -y install software-properties-common ca-certificates lsb-release openss
 # Install dtrace
 apt-get -y install systemtap-sdt-dev
 
-apt-get -y install git htop mc 
+apt-get -y install git htop mc dsh
 
 #apt-get -y install libnotify-bin
 
