@@ -61,7 +61,7 @@ Vagrant.configure("2") do |config|
 
   # kiosk subdomains
   subdomains = [nil]
-  subdomains += %w(www admin test demo shop assets wannabe cc app api thumbor)
+  subdomains += %w(www admin test demo shop assets saharok wannabe cc app api thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
   config.hostsupdater.aliases = subdomains.map { |s| [s,VAGRANT_APP_DOMAIN].compact * '.' }
 
