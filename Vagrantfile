@@ -6,6 +6,7 @@ unless Vagrant.has_plugin?("vagrant-hostsupdater")
 	raise 'vagrant-hostsupdater not installed. Try run \'vagrant plugin install vagrant-hostsupdater\''
 end
 VAGRANT_APP_DOMAIN = "kiiiosk.dev"
+VAGRANT_HOSTNAME = "vagrant"
 VAGRANT_IP = '192.168.10.201'
 Vagrant.configure("2") do |config|
 	#config.vm.box = 'ubuntu/trusty32'
@@ -18,18 +19,23 @@ Vagrant.configure("2") do |config|
   # config.vm.network :public_network, :bridge => 'en0: Wi-Fi (AirPort)'
 	config.vm.network :forwarded_port, guest: 3000, host: 3000
   config.vm.network :forwarded_port, guest: 3001, host: 3001
+  config.vm.network :forwarded_port, guest: 9000, host: 9000
+  config.vm.network :forwarded_port, guest: 9001, host: 9001
   #config.vm.network :forwarded_port, guest: 80, host: 3000
 
 	config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2222
-	config.vm.hostname = VAGRANT_APP_DOMAIN
+  config.vm.hostname = 'vagrant'
 	config.vm.synced_folder "./", "/home/vagrant/vagrant"
 
   # Speedup syncing folders
   # http://chase-seibert.github.io/blog/2014/03/09/vagrant-cachefilesd.html
-  if ENV['USE_NFS'] == 'true'
-    config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
-  else 
-    config.vm.synced_folder "./code", "/home/vagrant/code"
+
+  if Dir.exists? './code'
+    if ENV['USE_NFS'] == 'true'
+      config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
+    else 
+      config.vm.synced_folder "./code", "/home/vagrant/code"
+    end
   end
 
   if Vagrant.has_plugin?("vagrant-cachier")
@@ -55,14 +61,14 @@ Vagrant.configure("2") do |config|
 
   # kiosk subdomains
   subdomains = [nil]
-  subdomains += %w(www admin test demo shop assets thumbor)
+  subdomains += %w(www admin test demo shop assets saharok wannabe cc app api thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
   config.hostsupdater.aliases = subdomains.map { |s| [s,VAGRANT_APP_DOMAIN].compact * '.' }
 
 	config.vm.provider :virtualbox do |vm|
-		vm.customize ["modifyvm", :id, "--name", "kiiiosk.dev"]
-    if ENV['KIOSK_VM_MEM']
-      vm.customize ["modifyvm", :id, "--memory", [ENV['KIOSK_VM_MEM'].to_i, 2048].max]
+		vm.customize ["modifyvm", :id, "--name", VAGRANT_APP_DOMAIN]
+    if ENV['VM_MEM']
+      vm.customize ["modifyvm", :id, "--memory", [ENV['VM_MEM'].to_i, 3072].max]
     end
 
     # vagrant-faster сам подбирает нужные парметры
@@ -94,7 +100,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: 'provisions/kiosk.sh', privileged: false
 
 	config.vm.define :kiiiosk do |kiiiosk|
-		kiiiosk.vm.hostname = "#{VAGRANT_APP_DOMAIN}"
+		kiiiosk.vm.hostname = VAGRANT_HOSTNAME
 	end
 
 	config.vm.post_up_message = "\n\nProvisioning is done. 

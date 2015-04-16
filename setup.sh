@@ -2,7 +2,7 @@
 
 ssh-add ~/.ssh/id_rsa
 
-mkdir code
+mkdir ./code
 
 #bundle
 
