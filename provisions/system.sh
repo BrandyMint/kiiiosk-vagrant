@@ -34,4 +34,10 @@ test -f /etc/ssh/ssh_known_hosts && \
 test -f /etc/sudoers.d/ssh || \
   echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/ssh
 
+
+tee /home/vagrant/.ssh/config > /dev/null 2>&1 <<EOF
+Host *
+  ForwardAgent yes
+EOF
+
 exit 0;
