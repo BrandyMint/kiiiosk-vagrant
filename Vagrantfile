@@ -5,7 +5,7 @@ unless Vagrant.has_plugin?("vagrant-hostsupdater")
   #%x(vagrant plugin install vagrant-omnibus) unless Vagrant.has_plugin?('vagrant-omnibus')
 	raise 'vagrant-hostsupdater not installed. Try run \'vagrant plugin install vagrant-hostsupdater\''
 end
-VAGRANT_APP_DOMAIN = "kiiiosk.dev"
+VAGRANT_APP_DOMAIN = "vagrant.dev"
 VAGRANT_HOSTNAME = "vagrant"
 VAGRANT_IP = '192.168.10.201'
 Vagrant.configure("2") do |config|
