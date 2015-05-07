@@ -18,8 +18,8 @@ Vagrant 1.7.2
 
 4. Запустите инициализацию виртуальной машины
 
-    vagrant up
-
+    vagrant provision
+    
 Вход
 ----
 
