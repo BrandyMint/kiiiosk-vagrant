@@ -99,6 +99,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: 'provisions/shell.sh', privileged: false
   config.vm.provision "shell", path: 'provisions/ruby.sh',  privileged: false
   config.vm.provision "shell", path: 'provisions/geoip.sh'
+  config.vm.provision "shell", path: 'provisions/dev.sh'
   config.vm.provision "shell", path: 'provisions/kiosk.sh', privileged: false
 
 	config.vm.define :kiiiosk do |kiiiosk|
