@@ -4,19 +4,23 @@
 
 1. Убедитесь что у вас vagrant нужной версии:
 
-> vagrant -v
-Vagrant 1.7.2
+
+    > vagrant -v
+    Vagrant 1.7.2
 
 
 2. Сделайте доступным свой ключ (для github и ssh)
+
 
     ssh-add ~/.ssh/id_rsa
 
 3. Утановите необходимые для vagrant модули
 
+
     ./setup.sh
 
 4. Запустите инициализацию виртуальной машины
+
 
     vagrant provision
     
