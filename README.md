@@ -2,6 +2,9 @@
 Установка
 ---------
 
+Ставим virtualbox - https://www.virtualbox.org/wiki/Downloads
+Ставим Vagrant - http://www.vagrantup.com/downloads.html
+
 1. Убедитесь что у вас vagrant нужной версии:
 
     > vagrant -v
