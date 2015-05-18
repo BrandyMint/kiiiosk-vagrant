@@ -95,6 +95,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: 'provisions/elastic.sh'
   config.vm.provision "shell", path: 'provisions/postgresql.sh'
   config.vm.provision "shell", path: 'provisions/nodejs.sh'
+  config.vm.provision "shell", path: 'provisions/thumbor.sh'
   config.vm.provision "shell", path: 'provisions/tmux.sh',  privileged: false
   config.vm.provision "shell", path: 'provisions/shell.sh', privileged: false
   config.vm.provision "shell", path: 'provisions/ruby.sh',  privileged: false

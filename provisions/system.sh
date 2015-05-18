@@ -10,7 +10,7 @@ apt-get update
 
 # mdbtools mdbtools-dev 
  
-apt-get -y install software-properties-common ca-certificates lsb-release openssl
+apt-get -y install software-properties-common ca-certificates lsb-release openssl python-dev python-pip
 
 # Install dtrace
 apt-get -y install systemtap-sdt-dev
