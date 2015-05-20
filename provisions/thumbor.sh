@@ -104,4 +104,4 @@ post-start script
 end script
 EOF
 
-sudo start thumbor
+sudo restart thumbor

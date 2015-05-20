@@ -54,3 +54,8 @@ Default:
     SET VBOX_INSTALL_PATH="C:\Program Files\Oracle\VirtualBox"
    
  И повторите vagrant up
+
+Links:
+
+ * http://vagrant.dev:8023/ graphite
+ * http://vagrant.dev:8024/ grafana
