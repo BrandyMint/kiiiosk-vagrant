@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
 
   # Speedup syncing folders
   # http://chase-seibert.github.io/blog/2014/03/09/vagrant-cachefilesd.html
-
+  config.vm.synced_folder "./files", "/tmp/files"
   if Dir.exists? './code'
     if ENV['USE_NFS'] == 'true'
       config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
@@ -91,6 +91,8 @@ Vagrant.configure("2") do |config|
   # Example from Stan
   # https://gist.github.com/senotrusov/f5665286b593edd054a3
   #
+
+
   config.vm.provision "shell", path: 'provisions/system.sh'
   config.vm.provision "shell", path: 'provisions/cachefilesd.sh'
   config.vm.provision "shell", path: 'provisions/locale.sh'

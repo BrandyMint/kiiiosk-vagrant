@@ -2,7 +2,7 @@
 
 set -o errexit
 set -o xtrace
-
+echo 'Running elastic.sh'
 # JDK
 
 add-apt-repository -y ppa:webupd8team/java;
