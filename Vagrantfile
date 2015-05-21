@@ -21,6 +21,8 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 3001, host: 3001
   config.vm.network :forwarded_port, guest: 9000, host: 9000
   config.vm.network :forwarded_port, guest: 9001, host: 9001
+  config.vm.network :forwarded_port, guest: 8023, host: 8023
+  config.vm.network :forwarded_port, guest: 8024, host: 8024
   #config.vm.network :forwarded_port, guest: 80, host: 3000
 
 	config.vm.network :forwarded_port, id: 'ssh', guest: 22, host: 2222
@@ -101,7 +103,10 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: 'provisions/ruby.sh',  privileged: false
   config.vm.provision "shell", path: 'provisions/geoip.sh'
   config.vm.provision "shell", path: 'provisions/dev.sh'
-  config.vm.provision "shell", path: 'provisions/kiosk.sh', privileged: false
+  config.vm.provision "shell", path: 'provisions/graphite.sh'
+  config.vm.provision "shell", path: 'provisions/grafana.sh'
+  config.vm.provision "shell", path: 'provisions/statsd.sh'
+#  config.vm.provision "shell", path: 'provisions/kiosk.sh', privileged: false
 
 	config.vm.define :kiiiosk do |kiiiosk|
 		kiiiosk.vm.hostname = VAGRANT_HOSTNAME
