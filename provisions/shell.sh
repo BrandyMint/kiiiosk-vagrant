@@ -10,7 +10,9 @@ sudo chsh -s $(which zsh) $USER
 
 echo "Install dotfiles"
 #REPO="git@github.com:dapi/dotfiles.git"
-test -d /home/vagrant/dotfiles || git clone https://github.com/dapi/dotfiles.git
+
+rm -fr /home/vagrant/dotfiles
+git clone https://github.com/dapi/dotfiles.git
 
 ./dotfiles/install.sh
 ./dotfiles/vim_setup.sh
