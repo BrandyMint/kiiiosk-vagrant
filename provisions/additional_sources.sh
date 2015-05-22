@@ -1,3 +1,5 @@
+echo 'Running additional_sources.sh'
+
 #tee /etc/apt/sources.list > /dev/null 2>&1 <<EOF
 #deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted
 #deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted

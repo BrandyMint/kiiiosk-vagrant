@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo 'Running geoip.sh'
 wget --no-verbose -N http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
 gunzip GeoLiteCity.dat.gz
 
