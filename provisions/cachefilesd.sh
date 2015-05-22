@@ -1,4 +1,5 @@
 #!/bin/bash
+echo 'Running cachefilesd.sh'
 
 set -o errexit
 set -o xtrace

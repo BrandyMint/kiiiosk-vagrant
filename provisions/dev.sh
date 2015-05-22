@@ -1,5 +1,5 @@
 #!/usr/bin/zsh
-
+echo 'Running dev.sh'
 source ~/.zshrc
 # Fix dpkg-preconfigure: unable to re-open stdin: No such file or directory
 
