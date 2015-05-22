@@ -4,7 +4,7 @@ wget https://grafanarel.s3.amazonaws.com/builds/grafana_2.0.2_amd64.deb -O /tmp/
 sudo apt-get install -y adduser libfontconfig
 sudo dpkg -i /tmp/grafana_2.0.2_amd64.deb
 sudo update-rc.d grafana-server defaults 95 10
-cp /tmp/files/grafana.ini /etc/grafana/grafana.ini
+cp /home/vagrant/vagrant/files/grafana.ini /etc/grafana/grafana.ini
 
 
 service grafana-server start

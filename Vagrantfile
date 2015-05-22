@@ -31,11 +31,10 @@ Vagrant.configure("2") do |config|
 
   # Speedup syncing folders
   # http://chase-seibert.github.io/blog/2014/03/09/vagrant-cachefilesd.html
-  config.vm.synced_folder "./files", "/tmp/files"
   if Dir.exists? './code'
     if ENV['USE_NFS'] == 'true'
-      config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc'] 
-    else 
+      config.vm.synced_folder "./code", "/home/vagrant/code", type: 'nfs', mount_options: ['rw', 'vers=3', 'tcp', 'fsc']
+    else
       config.vm.synced_folder "./code", "/home/vagrant/code"
     end
   end
@@ -52,7 +51,7 @@ Vagrant.configure("2") do |config|
       ## to lock files needed for /var/cache/* operations. All of this can be avoided
       ## by using NFSv4 everywhere. Please note that the tcp option is not the default.
       #mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
-    #} 
+    #}
   end
 
   # ssh for windows
@@ -64,7 +63,7 @@ Vagrant.configure("2") do |config|
   # kiosk subdomains
   subdomains = [nil]
   subdomains += %w(www admin test demo tasty
-  shop assets saharok wannabe sputnik cc varvara-shop 
+  shop assets saharok wannabe sputnik cc varvara-shop
   12storeez sex-shop freak-out-shop app api thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
   config.hostsupdater.aliases = subdomains.map { |s| [s,VAGRANT_APP_DOMAIN].compact * '.' }
@@ -114,7 +113,7 @@ Vagrant.configure("2") do |config|
 		kiiiosk.vm.hostname = VAGRANT_HOSTNAME
 	end
 
-	config.vm.post_up_message = "\n\nProvisioning is done. 
+	config.vm.post_up_message = "\n\nProvisioning is done.
 Visit http://#{VAGRANT_APP_DOMAIN} for test and development kiiiosk application!
 Projects directory is: /home/vagrant/code
 PostgreSQL User is: postgres
