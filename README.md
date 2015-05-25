@@ -58,6 +58,10 @@ Default:
 Links:
 
  * http://vagrant.dev:8023/ graphite
- * http://vagrant.dev:8024/ grafana
+ * http://vagrant.dev:8024/ grafana admin/admin
+
+Рестарт
+
+   sudo service carbon-cache restart
 
 По умолчанию там логин с паролем admin. Настраивать - заходишь в дата-сорс, добавляешь графит в качестве бэкэнда. Потом создаёшь новый дашбоард и графики..
