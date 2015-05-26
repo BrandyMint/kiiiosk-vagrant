@@ -64,4 +64,8 @@ Links:
 
    sudo service carbon-cache restart
 
+Удалить все данные из graphite
+
+ sudo find /var/lib/graphite/whisper -name '*.wsp' -delete
+
 По умолчанию там логин с паролем admin. Настраивать - заходишь в дата-сорс, добавляешь графит в качестве бэкэнда. Потом создаёшь новый дашбоард и графики..
