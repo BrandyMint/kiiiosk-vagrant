@@ -35,73 +35,7 @@ DETECTORS =     [
 RESULT_STORAGE_FILE_STORAGE_ROOT_PATH = '/tmp/thumbor/result_storage'
 EOF
 
-tee /etc/init/thumbor.conf > /dev/null 2>&1 <<EOF
-description "Thumbor image manipulation service"
-author "Wichert Akkerman <wichert@wiggy.net>"
-
-start on filesystem and runlevel [2345]
-stop on runlevel [!2345]
-
-console output
-
-env port=80
-
-pre-start script
-    [ -r /etc/default/thumbor ] && . /etc/default/thumbor
-    if [ "$enabled" = "0" ] && [ "$force" != "1" ] ; then
-        logger -is -t "$UPSTART_JOB" "Thumbor is disabled by /etc/default/thumbor, add force=1 to your service command"
-        stop
-        exit 0
-    fi
-    for p in `echo ${port} | tr ',' ' '`; do
-        start thumbor-worker p=$p
-    done
-end script
-EOF
-
-
-tee /etc/init/thumbor-worker.conf > /dev/null 2>&1 <<EOF
-description "Thumbor image manipulation service"
-author "Wichert Akkerman <wichert@wiggy.net>"
-
-stop on stopping thumbor
-
-respawn
-respawn limit 5 10
-umask 022
-
-setuid thumbor
-setgid thumbor
-
-env DAEMON=/usr/local/bin/thumbor
-
-env conffile=/etc/thumbor.conf
-env keyfile=/etc/thumbor.key
-env ip=0.0.0.0
-
-chdir /var/lib/thumbor
-
-instance "$p"
-
-pre-start script
-    [ -r /etc/default/thumbor ] && . /etc/default/thumbor
-    if [ "$enabled" = "0" ] && [ "$force" != "1" ] ; then
-        logger -is -t "$UPSTART_JOB" "Thumbor is disabled by /etc/default/thumbor, add force=1 to your service command"
-        stop
-        exit 0
-    fi
-    exec >"/tmp/${UPSTART_JOB}-${p}"
-    echo "ip=${ip}"
-end script
-
-script
-    . "/tmp/${UPSTART_JOB}-${p}"
-    $DAEMON -c "${conffile}" -i "${ip}" -k "${keyfile}" -p "${p}" -l debug
-end script
-
-post-start script
-    rm -f "/tmp/$UPSTART_JOB-${p}"
-end script
-EOF
+cp /home/vagrant/vagrant/files/upstart/thumbor.conf /etc/init/thumbor.conf
+cp /home/vagrant/vagrant/files/upstart/thumbor-worker.conf /etc/init/thumbor-worker.conf
 
 restart thumbor || start thumbor
