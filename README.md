@@ -59,6 +59,7 @@ Links:
 
  * http://vagrant.dev:8023/ graphite
  * http://vagrant.dev:8024/ grafana admin/admin
+ * thumbor http://vagrant.dev:8081
 
 Рестарт
 
