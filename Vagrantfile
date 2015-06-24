@@ -64,6 +64,7 @@ Vagrant.configure("2") do |config|
   # kiosk subdomains
   subdomains = [nil]
   subdomains += %w(www admin test demo tasty jelleryru jewelart
+  dresshood nomoreshop no_more_shop
   shop assets saharok wannabe sputnik cc varvara-shop
   12storeez sex-shop freak-out-shop app api thumbor)
   subdomains << '*' if RUBY_PLATFORM =~ /darwin/
