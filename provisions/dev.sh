@@ -14,4 +14,7 @@ test -d /home/vagrant/code || sudo -u vagrant mkdir /home/vagrant/code
 # https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers
 echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
 
+# Install nvm
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash
+
 exit 0
