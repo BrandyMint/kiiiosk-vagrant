@@ -1,3 +1,6 @@
+<a href="http://teamcity.brandymint.ru/viewType.html?buildTypeId=btN&guest=1">
+<img src="http://teamcity.brandymint.ru/app/rest/builds/buildType:(id:KiiioskVagrant_Master)/statusIcon"/>
+</a>
 
 Установка
 ---------
