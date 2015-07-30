@@ -29,7 +29,7 @@ rbenv global 2.2.2
 rbenv exec gem list | grep bundler || rbenv exec gem install bundler
 
 # gist publicator
-gem install jist
+rbenv exec  gem install jist
 
 rbenv rehash
 
