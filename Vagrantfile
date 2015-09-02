@@ -109,6 +109,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: 'provisions/graphite.sh'
   config.vm.provision "shell", path: 'provisions/grafana.sh'
   config.vm.provision "shell", path: 'provisions/statsd.sh'
+  config.vm.provision "shell", path: 'provisions/mysql.sh'
   config.vm.provision "shell", path: 'provisions/kiosk.sh', privileged: false
 
 	config.vm.define :kiiiosk do |kiiiosk|
