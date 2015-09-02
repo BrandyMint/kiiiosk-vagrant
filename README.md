@@ -73,3 +73,11 @@ Links:
  sudo find /var/lib/graphite/whisper -name '*.wsp' -delete
 
 По умолчанию там логин с паролем admin. Настраивать - заходишь в дата-сорс, добавляешь графит в качестве бэкэнда. Потом создаёшь новый дашбоард и графики..
+
+
+TODO
+---
+
+Можно в будущем попробовать вместо VirtualBox под OSX:
+
+* https://github.com/mist64/xhyve
