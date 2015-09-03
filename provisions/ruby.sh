@@ -24,7 +24,7 @@ eval "$(rbenv init)"
 rbenv versions | grep 2.2.2 || 
 rbenv install 2.2.2 --verbose
 
-rbenv global 2.2.2
+rbenv local 2.2.2
 
 rbenv exec gem list | grep bundler || rbenv exec gem install bundler
 
