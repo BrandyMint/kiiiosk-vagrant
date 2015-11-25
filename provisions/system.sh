@@ -23,7 +23,7 @@ apt-get -y install vim-nox exuberant-ctags silversearcher-ag
 
 apt-get -y remove puppet-common chef-zero
 
-# libmysqlclient-dev 
+apt-get -y install libmysqlclient-dev
 # apt-get -y install sqlite3 libsqlite3-dev 
 
 test -f /etc/ssh/ssh_known_hosts && \
