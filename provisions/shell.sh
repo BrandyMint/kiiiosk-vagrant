@@ -17,4 +17,8 @@ git clone https://github.com/dapi/dotfiles.git
 ./dotfiles/install.sh
 ./dotfiles/vim_setup.sh
 
+
+wget https://raw.github.com/technomancy/leiningen/stable/bin/lein -O /usr/local/bin/lein
+chmod +x /usr/local/bin/lein
+
 exit 0
