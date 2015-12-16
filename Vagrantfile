@@ -73,17 +73,17 @@ Vagrant.configure("2") do |config|
 	config.vm.provider :virtualbox do |vm|
 		vm.customize ["modifyvm", :id, "--name", VAGRANT_APP_DOMAIN]
     if ENV['VM_MEM']
-      vm.customize ["modifyvm", :id, "--memory", [ENV['VM_MEM'].to_i, 3072].max]
+      vm.customize ["modifyvm", :id, "--memory", [ENV['VM_MEM'].to_i, 4096].max]
     end
 
     # vagrant-faster сам подбирает нужные парметры
     # на mac pro 4 cpu, 8Gb отдает 2 cpu и 2Gb
-		#cpu_count = 2
-		#if RUBY_PLATFORM =~ /linux/
-			#cpu_count = `nproc`.to_i
-		#elsif RUBY_PLATFORM =~ /darwin/
-			#cpu_count = `sysctl -n hw.ncpu`.to_i
-		#end
+		cpu_count = 2
+		if RUBY_PLATFORM =~ /linux/
+			cpu_count = `nproc`.to_i
+		elsif RUBY_PLATFORM =~ /darwin/
+			cpu_count = `sysctl -n hw.ncpu`.to_i
+		end
 		#vm.customize ["modifyvm", :id, "--cpus", cpu_count]
 		vm.customize ["modifyvm", :id, "--ioapic", "on"]
 		vm.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]

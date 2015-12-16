@@ -8,7 +8,6 @@ mkdir ./code
 
 vagrant plugin install vagrant-ansible-local
 vagrant plugin install vagrant-hostsupdater
-vagrant plugin install vagrant-faster
 vagrant plugin install vagrant-scp
 vagrant plugin install vagrant-cachier
 

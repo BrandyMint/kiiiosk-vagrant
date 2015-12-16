@@ -4,6 +4,7 @@
 
 Установка
 ---------
+Для нормальной работы нужно не мение 4GB опертивки.
 
 * Ставим virtualbox - https://www.virtualbox.org/wiki/Downloads
 * Ставим Vagrant - http://www.vagrantup.com/downloads.html
@@ -38,6 +39,7 @@
 
     USE_NFS=true vagrant up
 
+Используйте этот способ если не работает основной.
 
 Windows:
 ---
