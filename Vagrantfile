@@ -72,9 +72,7 @@ Vagrant.configure("2") do |config|
 
 	config.vm.provider :virtualbox do |vm|
 		vm.customize ["modifyvm", :id, "--name", VAGRANT_APP_DOMAIN]
-    if ENV['VM_MEM']
-      vm.customize ["modifyvm", :id, "--memory", [ENV['VM_MEM'].to_i, 4096].max]
-    end
+    vm.customize ["modifyvm", :id, "--memory", ENV['VM_MEM'] ? ENV['VM_MEM'].to_i : 4096]
 
     # vagrant-faster сам подбирает нужные парметры
     # на mac pro 4 cpu, 8Gb отдает 2 cpu и 2Gb
