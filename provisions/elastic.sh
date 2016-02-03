@@ -27,4 +27,6 @@ service elasticsearch start
 
 /usr/share/elasticsearch/bin/plugin -l|grep HQ || /usr/share/elasticsearch/bin/plugin -install royrusso/elasticsearch-HQ;
 
+/etc/init.d/elasticsearch restart
+
 exit 0;
