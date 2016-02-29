@@ -24,6 +24,12 @@
     ./setup.sh
 
 4. Запустите инициализацию виртуальной машины
+5. 
+
+
+## Шаринг FS
+
+* https://github.com/fabiokr/vagrant-sshfs
 
     vagrant up
     
