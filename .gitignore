@@ -4,5 +4,5 @@ build/*.box
 .vagrant
 /code
 /vagrant*-*
-
+.DS_Store
 /d2*-*-*
